@@ -3,167 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBERDUNE - Admin Area</title>
+    <title>CYBERDUNE - Matrix Challenge</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: #ff0000; font-family: 'Courier New', monospace; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-        .matrix-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .matrix-column { position: absolute; top: -100px; color: #ff0000; font-size: 12px; line-height: 12px; animation: matrix-rain linear infinite; opacity: 0.3; }
-        @keyframes matrix-rain { 0% { transform: translateY(-100px); opacity: 0.3 } 100% { transform: translateY(100vh); opacity: 0 } }
-        .container { background: rgba(0,0,0,0.95); border: 2px solid #ff0000; padding: 40px; border-radius: 10px; backdrop-filter: blur(10px); max-width: 600px; width: 90%; text-align: center; box-shadow: 0 0 30px rgba(255,0,0,0.3); }
-        .title { font-size: 2.5em; margin-bottom: 20px; text-shadow: 0 0 20px #ff0000; animation: glow 2s ease-in-out infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 20px #ff0000 } to { text-shadow: 0 0 30px #ff0000, 0 0 40px #ff0000 } }
-        .access-status { font-size: 1.2em; margin-bottom: 20px; padding: 18px; border: 1px solid #ff0000; background: rgba(255,0,0,0.05); border-radius: 6px; }
-        .flag-container { background: #110000; border: 1px solid #ff0000; padding: 18px; border-radius: 6px; margin: 18px 0; font-size: 1.05em; letter-spacing: 1px; word-break: break-all; color: #fff; display: none; }
-        .unauthorized { color: #ffffff; font-size: 1.1em; }
-        .back-btn { background: transparent; color: #ff0000; border: 1px solid #ff0000; padding: 10px 30px; font-family: 'Courier New', monospace; cursor: pointer; transition: all 0.3s ease; margin-top: 20px; text-decoration: none; display: inline-block; }
-        .timestamp { font-size: 0.8em; opacity: 0.7; margin-top: 12px; }
-        .server-auth { margin-top: 14px; }
-        input.secret { background: transparent; border: 1px solid #ff0000; color: #ff0000; padding: 10px; width: 320px; font-family: 'Courier New', monospace; }
-        button.btn { background: transparent; color: #ff0000; border: 1px solid #ff0000; padding: 8px 14px; cursor: pointer; margin-left: 8px; }
-        .status { margin-top: 10px; min-height: 20px; color: #fff; }
-        pre.flag-text { font-family: 'Courier New', monospace; font-size: 1em; white-space: pre-wrap; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100px;
+            color: #ff0000;
+            font-size: 14px;
+            line-height: 14px;
+            animation: matrix-rain linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes matrix-rain {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #ff0000;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #ff0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 100px);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff0000;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #ff0000; }
+            to { text-shadow: 0 0 30px #ff0000, 0 0 40px #ff0000; }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .challenge-btn {
+            background: transparent;
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 20px #ff0000;
+            transform: translateY(-2px);
+        }
+
+        .challenge-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .challenge-btn:hover::before {
+            left: 100%;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            opacity: 0.6;
+        }
+
+        .challenge-interface {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #ff0000;
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            min-width: 400px;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        .challenge-interface h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #ff0000;
+        }
+
+        .secret-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+
+        .secret-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            background: transparent;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .status-message {
+            margin-top: 15px;
+            text-align: center;
+            min-height: 20px;
+            color: #ffffff;
+        }
+
+        .success {
+            color: #ff0000 !important;
+            animation: success-pulse 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes success-pulse {
+            from { text-shadow: 0 0 10px #ff0000; }
+            to { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000; }
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
     <div class="matrix-bg"></div>
+    
+    <div class="overlay" id="overlay"></div>
 
-    <div class="container">
-        <h1 class="title">ADMIN AREA</h1>
-
-        <div id="content">
-            <!-- populated by JS -->
+    <header class="header">
+        <div class="logo" id="logo">
+            CYBER<br>DUNE
         </div>
+        <div style="color: #ff0000; font-size: 0.9em;">
+            MATRIX PROTOCOL v2.1
+        </div>
+    </header>
 
-        <div id="flagBox" class="flag-container"><pre id="flagText" class="flag-text"></pre></div>
+    <main class="main-content">
+        <h1 class="title">CYBERDUNE</h1>
+        <p class="subtitle">
+            Welcome to the Matrix Protocol Challenge. Only those who can navigate through the digital maze 
+            and unlock the secrets hidden in the quantum realm will gain access to the restricted zone. 
+            Are you ready to dive deep into the binary wilderness?
+        </p>
+        <button class="challenge-btn" onclick="startChallenge()">
+            Start Challenge
+        </button>
+    </main>
 
-        <a href="index.html" class="back-btn">← BACK TO MATRIX</a>
-
-        <div id="timestamp" class="timestamp"></div>
+    <div class="challenge-interface" id="challengeInterface">
+        <h2>:: ACCESS TERMINAL ::</h2>
+        <div class="input-group">
+            <label for="secretInput">Enter Access Code:</label>
+            <input type="text" id="secretInput" class="secret-input" placeholder="Enter the secret..." maxlength="100">
+        </div>
+        <div class="btn-group">
+            <button class="btn" onclick="checkAccess()">AUTHENTICATE</button>
+            <button class="btn" onclick="closeChallenge()">CANCEL</button>
+        </div>
+        <div class="status-message" id="statusMessage"></div>
     </div>
 
-<script>
-/* Matrix rain (same look as index) */
-(function createMatrix(){
-    const container = document.querySelector('.matrix-bg');
-    const chars = '0123456789ABCDEFアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-    function makeCol(){
-        const col = document.createElement('div');
-        col.className = 'matrix-column';
-        col.style.left = (Math.random()*100) + 'vw';
-        col.style.animationDuration = (Math.random()*4 + 3) + 's';
-        col.style.color = Math.random() > 0.7 ? '#ffffff' : '#ff0000';
-        let t='';
-        const L = Math.floor(Math.random()*15) + 3;
-        for(let i=0;i<L;i++) t += chars[Math.floor(Math.random()*chars.length)] + '<br>';
-        col.innerHTML = t;
-        container.appendChild(col);
-        setTimeout(()=>{ if(container.contains(col)) container.removeChild(col); }, 7000);
-    }
-    setInterval(makeCol, 300);
-})();
+    <footer class="footer">
+        CYBERDUNE CTF © 2025 | UNAUTHORIZED ACCESS PROHIBITED
+    </footer>
 
-/* Helpers and UI manipulation */
-const contentEl = document.getElementById('content');
-const flagBox = document.getElementById('flagBox');
-const flagText = document.getElementById('flagText');
-const tsEl = document.getElementById('timestamp');
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const container = document.querySelector('.matrix-bg');
+            const chars = '0123456789ABCDEFアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            function createColumn() {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + 'vw';
+                column.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                column.style.color = Math.random() > 0.7 ? '#ffffff' : '#ff0000';
+                
+                let text = '';
+                const length = Math.floor(Math.random() * 20) + 5;
+                for (let i = 0; i < length; i++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                
+                container.appendChild(column);
+                
+                setTimeout(() => {
+                    container.removeChild(column);
+                }, 5000);
+            }
+            
+            setInterval(createColumn, 200);
+        }
 
-function renderUnauthorizedUI() {
-    contentEl.innerHTML = `
-        <div class="access-status unauthorized">⚠ ACCESS DENIED</div>
-        <div style="font-size:0.95em;margin:12px 0;color:#ffffff;">UNAUTHORIZED ACCESS PROHIBITED</div>
-        <div style="font-size:0.9em;opacity:0.85;">You must complete the quantum verification protocol to access this area.</div>
+        function startChallenge() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('challengeInterface').style.display = 'block';
+            document.getElementById('secretInput').focus();
+        }
 
-        <div class="server-auth">
-          <div style="font-size:0.95em;margin-top:14px;color:#ff0000;">Authenticate via server</div>
-          <input id="serverCode" class="secret" type="password" placeholder="Enter access secret" autocomplete="off" />
-          <button id="serverAuthBtn" class="btn">AUTH</button>
-          <div id="serverStatus" class="status"></div>
-        </div>
-    `;
+        function closeChallenge() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('challengeInterface').style.display = 'none';
+            document.getElementById('statusMessage').textContent = '';
+            document.getElementById('secretInput').value = '';
+        }
 
-    // attach handler
-    document.getElementById('serverAuthBtn').addEventListener('click', async () => {
-        const code = document.getElementById('serverCode').value || '';
-        const st = document.getElementById('serverStatus');
-        if(!code.trim()){ st.textContent = 'ERROR: empty secret'; return; }
-        st.textContent = 'Contacting server...';
-        try {
-            const resp = await fetch('/api/auth', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({ code })
+        function checkAccess() {
+            const input = document.getElementById('secretInput').value;
+            const statusEl = document.getElementById('statusMessage');
+            
+            if (!input.trim()) {
+                statusEl.textContent = 'ERROR: Empty access code';
+                statusEl.className = 'status-message';
+                return;
+            }
+
+            statusEl.textContent = 'Initializing quantum verification protocol...';
+            statusEl.className = 'status-message';
+            
+            // Load and initialize WASM module
+            setTimeout(() => {
+                loadWasmAndCheck(input);
+            }, 1000);
+        }
+
+        async function loadWasmAndCheck(inputSecret) {
+            const statusEl = document.getElementById('statusMessage');
+            
+            try {
+                statusEl.textContent = 'Loading security module...';
+                
+                const wasmResponse = await fetch('module.wasm');
+                if (!wasmResponse.ok) {
+                    throw new Error('Failed to fetch WASM module');
+                }
+                
+                const wasmBytes = await wasmResponse.arrayBuffer();
+                const wasmModule = await WebAssembly.instantiate(wasmBytes);
+                
+                const { instance } = wasmModule;
+                const memory = instance.exports.memory;
+                const checkSecret = instance.exports.check_secret;
+                
+                if (!checkSecret) {
+                    throw new Error('Security function not found');
+                }
+                
+                statusEl.textContent = 'Verifying access credentials...';
+                
+                // Write input to WASM memory
+                const encoder = new TextEncoder();
+                const inputBytes = encoder.encode(inputSecret);
+                const inputPtr = 1024; // Use a fixed offset in memory
+                
+                const memoryView = new Uint8Array(memory.buffer);
+                memoryView.set(inputBytes, inputPtr);
+                
+                // Call WASM check function
+                const result = checkSecret(inputPtr, inputBytes.length);
+                
+                if (result === 1) {
+                    statusEl.textContent = 'ACCESS GRANTED - Redirecting...';
+                    statusEl.className = 'status-message success';
+                    
+                    // Set authentication flag
+                    localStorage.setItem('cd_auth', '1');
+                    localStorage.setItem('cd_timestamp', Date.now().toString());
+                    
+                    setTimeout(() => {
+                        window.location.href = 'flag.html';
+                    }, 2000);
+                } else {
+                    statusEl.textContent = 'ACCESS DENIED - Invalid credentials';
+                    statusEl.className = 'status-message';
+                    
+                    // Clear any existing auth
+                    localStorage.removeItem('cd_auth');
+                    localStorage.removeItem('cd_timestamp');
+                }
+                
+            } catch (error) {
+                console.error('WASM Error:', error);
+                statusEl.textContent = 'SYSTEM ERROR - Security module failed to initialize';
+                statusEl.className = 'status-message';
+            }
+        }
+
+        // Handle Enter key in input
+        document.addEventListener('DOMContentLoaded', function() {
+            const secretInput = document.getElementById('secretInput');
+            secretInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAccess();
+                }
             });
-            const j = await resp.json();
-            if(resp.ok && j.ok){
-                // success: show flag, store locally (to preserve behavior)
-                flagText.textContent = j.flag;
-                flagBox.style.display = 'block';
-                st.textContent = 'ACCESS GRANTED';
-                // store auth & timestamp & cached flag (so index redirect still works)
-                localStorage.setItem('cd_auth','1');
-                localStorage.setItem('cd_timestamp', Date.now().toString());
-                try { localStorage.setItem('cd_flag', j.flag); } catch(e){}
-                tsEl.textContent = 'Authenticated: ' + new Date().toLocaleString();
-                // remove server auth UI for cleanliness
-                const sa = document.querySelector('.server-auth');
-                if(sa) sa.style.display = 'none';
-                contentEl.querySelector('.access-status').textContent = '✓ QUANTUM VERIFICATION SUCCESSFUL';
-            } else {
-                st.textContent = j.error || 'ACCESS DENIED';
-            }
-        } catch (err) {
-            console.error('Server auth error', err);
-            st.textContent = 'NETWORK/SERVER ERROR';
-        }
-    });
-}
+            
+            // Start matrix effect
+            createMatrixRain();
+        });
 
-function renderAuthorizedUI(flagStr, authTime) {
-    contentEl.innerHTML = `<div class="access-status">✓ QUANTUM VERIFICATION SUCCESSFUL</div>
-      <div style="font-size:0.95em;opacity:0.85;margin-top:8px;">Congratulations! You have successfully passed verification.</div>`;
-    flagText.textContent = flagStr || '';
-    flagBox.style.display = 'block';
-    tsEl.textContent = 'Authenticated: ' + new Date(authTime).toLocaleString();
-}
-
-/* Main logic:
-   - If localStorage has cd_auth and recent timestamp, show authorized UI.
-     Prefer to show cached flag if available.
-   - Otherwise show unauthorized UI but allow server-side auth (POST /api/auth).
-*/
-document.addEventListener('DOMContentLoaded', function(){
-    const auth = localStorage.getItem('cd_auth');
-    const timestamp = localStorage.getItem('cd_timestamp');
-
-    if(auth === '1' && timestamp){
-        const authTime = parseInt(timestamp, 10);
-        const oneHour = 60*60*1000;
-        if(Date.now() - authTime <= oneHour){
-            // local auth still valid
-            const cachedFlag = localStorage.getItem('cd_flag');
-            if(cachedFlag){
-                renderAuthorizedUI(cachedFlag, authTime);
-                return;
-            } else {
-                // no cached flag: show authorized notice and offer to fetch from server
-                renderAuthorizedUI('Flag can be retrieved from server — authenticate below to fetch it.', authTime);
-                // show server auth UI under current content
-                setTimeout(renderUnauthorizedUI, 10);
-                return;
-            }
-        } else {
-            // expired
-            localStorage.removeItem('cd_auth');
-            localStorage.removeItem('cd_timestamp');
-            localStorage.removeItem('cd_flag');
-        }
-    }
-
-    // default: not authorized -> show unauthorized UI with server auth box
-    renderUnauthorizedUI();
-});
-</script>
+        // Close challenge interface when clicking overlay
+        document.getElementById('overlay').addEventListener('click', closeChallenge);
+    </script>
 </body>
 </html>
