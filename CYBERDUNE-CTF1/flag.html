@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERDUNE - Admin Area</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100px;
+            color: #ff0000;
+            font-size: 12px;
+            line-height: 12px;
+            animation: matrix-rain linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes matrix-rain {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #ff0000;
+            padding: 40px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+        }
+
+        .title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff0000;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #ff0000; }
+            to { text-shadow: 0 0 30px #ff0000, 0 0 40px #ff0000; }
+        }
+
+        .access-status {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+            border-radius: 5px;
+        }
+
+        .flag-container {
+            background: #110000;
+            border: 1px solid #ff0000;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            word-break: break-all;
+            animation: flag-glow 3s ease-in-out infinite alternate;
+            color: #ffffff;
+        }
+
+        @keyframes flag-glow {
+            from { box-shadow: 0 0 10px rgba(255, 0, 0, 0.3); }
+            to { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
+        }
+
+        .unauthorized {
+            color: #ffffff;
+            font-size: 1.5em;
+            text-shadow: 0 0 20px #ffffff;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 10px 30px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .timestamp {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+
+    <div class="container">
+        <h1 class="title">ADMIN AREA</h1>
+
+        <div id="content">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+
+        <a href="index.html" class="back-btn">← BACK TO MATRIX</a>
+
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+
+    <script>
+        function createMatrixRain() {
+            const container = document.querySelector('.matrix-bg');
+            const chars = '0123456789ABCDEFアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+            function createColumn() {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + 'vw';
+                column.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                column.style.color = Math.random() > 0.7 ? '#ffffff' : '#ff0000';
+
+                let text = '';
+                const length = Math.floor(Math.random() * 15) + 3;
+                for (let i = 0; i < length; i++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+
+                container.appendChild(column);
+
+                setTimeout(() => {
+                    if (container.contains(column)) {
+                        container.removeChild(column);
+                    }
+                }, 7000);
+            }
+
+            setInterval(createColumn, 300);
+        }
+
+        function checkAuthorization() {
+            const auth = localStorage.getItem('cd_auth');
+            const timestamp = localStorage.getItem('cd_timestamp');
+            const contentEl = document.getElementById('content');
+            const timestampEl = document.getElementById('timestamp');
+
+            // Check if authorized and timestamp is recent (within 1 hour)
+            if (auth === '1' && timestamp) {
+                const authTime = parseInt(timestamp);
+                const currentTime = Date.now();
+                const oneHour = 60 * 60 * 1000;
+
+                if (currentTime - authTime <= oneHour) {
+                    // Authorized - show flag
+                    contentEl.innerHTML = `
+                        <div class="access-status">
+                            ✓ QUANTUM VERIFICATION SUCCESSFUL
+                        </div>
+                        <div class="flag-container">
+                            <pre>CYBERDUNE{WASM_R3V3RS3_M4ST3RCL4SS_QU4NTUM_K3Y_2025}</pre>
+                        </div>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 15px;">
+                            Congratulations! You have successfully bypassed the quantum security protocol.
+                        </div>
+                    `;
+
+                    const authDate = new Date(authTime);
+                    timestampEl.textContent = `Authenticated: ${authDate.toLocaleString()}`;
+                } else {
+                    // Token expired
+                    localStorage.removeItem('cd_auth');
+                    localStorage.removeItem('cd_timestamp');
+                    showUnauthorized();
+                }
+            } else {
+                showUnauthorized();
+            }
+        }
+
+        function showUnauthorized() {
+            const contentEl = document.getElementById('content');
+            const timestampEl = document.getElementById('timestamp');
+
+            contentEl.innerHTML = `
+                <div class="access-status unauthorized">
+                    ⚠ ACCESS DENIED
+                </div>
+                <div style="font-size: 1.1em; margin: 20px 0; color: #ffffff;">
+                    UNAUTHORIZED ACCESS PROHIBITED
+                </div>
+                <div style="font-size: 0.9em; opacity: 0.8;">
+                    You must complete the quantum verification protocol to access this area.
+                </div>
+            `;
+
+            timestampEl.textContent = `Access Attempt: ${new Date().toLocaleString()}`;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            createMatrixRain();
+            checkAuthorization();
+        });
+    </script>
+</body>
+</html>

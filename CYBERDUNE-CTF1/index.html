@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERDUNE - Matrix Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100px;
+            color: #ff0000;
+            font-size: 14px;
+            line-height: 14px;
+            animation: matrix-rain linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes matrix-rain {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #ff0000;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #ff0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 100px);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff0000;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #ff0000; }
+            to { text-shadow: 0 0 30px #ff0000, 0 0 40px #ff0000; }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .challenge-btn {
+            background: transparent;
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 20px #ff0000;
+            transform: translateY(-2px);
+        }
+
+        .challenge-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .challenge-btn:hover::before {
+            left: 100%;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            opacity: 0.6;
+        }
+
+        .challenge-interface {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #ff0000;
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            min-width: 400px;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        .challenge-interface h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #ff0000;
+        }
+
+        .secret-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+
+        .secret-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            background: transparent;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        .status-message {
+            margin-top: 15px;
+            text-align: center;
+            min-height: 20px;
+            color: #ffffff;
+        }
+
+        .success {
+            color: #ff0000 !important;
+            animation: success-pulse 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes success-pulse {
+            from { text-shadow: 0 0 10px #ff0000; }
+            to { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000; }
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <header class="header">
+        <div class="logo" id="logo">
+            CYBER<br>DUNE
+        </div>
+        <div style="color: #ff0000; font-size: 0.9em;">
+            MATRIX PROTOCOL v2.1
+        </div>
+    </header>
+
+    <main class="main-content">
+        <h1 class="title">CYBERDUNE</h1>
+        <p class="subtitle">
+            Welcome to the Matrix Protocol Challenge. Only those who can navigate through the digital maze 
+            and unlock the secrets hidden in the quantum realm will gain access to the restricted zone. 
+            Are you ready to dive deep into the binary wilderness?
+        </p>
+        <button class="challenge-btn" onclick="startChallenge()">
+            Start Challenge
+        </button>
+    </main>
+
+    <div class="challenge-interface" id="challengeInterface">
+        <h2>:: ACCESS TERMINAL ::</h2>
+        <div class="input-group">
+            <label for="secretInput">Enter Access Code:</label>
+            <input type="text" id="secretInput" class="secret-input" placeholder="Enter the secret..." maxlength="100">
+        </div>
+        <div class="btn-group">
+            <button class="btn" onclick="checkAccess()">AUTHENTICATE</button>
+            <button class="btn" onclick="closeChallenge()">CANCEL</button>
+        </div>
+        <div class="status-message" id="statusMessage"></div>
+    </div>
+
+    <footer class="footer">
+        CYBERDUNE CTF © 2025 | UNAUTHORIZED ACCESS PROHIBITED
+    </footer>
+
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const container = document.querySelector('.matrix-bg');
+            const chars = '0123456789ABCDEFアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+            function createColumn() {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + 'vw';
+                column.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                column.style.color = Math.random() > 0.7 ? '#ffffff' : '#ff0000';
+
+                let text = '';
+                const length = Math.floor(Math.random() * 20) + 5;
+                for (let i = 0; i < length; i++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+
+                container.appendChild(column);
+
+                setTimeout(() => {
+                    container.removeChild(column);
+                }, 5000);
+            }
+
+            setInterval(createColumn, 200);
+        }
+
+        function startChallenge() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('challengeInterface').style.display = 'block';
+            document.getElementById('secretInput').focus();
+        }
+
+        function closeChallenge() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('challengeInterface').style.display = 'none';
+            document.getElementById('statusMessage').textContent = '';
+            document.getElementById('secretInput').value = '';
+        }
+
+        function checkAccess() {
+            const input = document.getElementById('secretInput').value;
+            const statusEl = document.getElementById('statusMessage');
+
+            if (!input.trim()) {
+                statusEl.textContent = 'ERROR: Empty access code';
+                statusEl.className = 'status-message';
+                return;
+            }
+
+            statusEl.textContent = 'Initializing quantum verification protocol...';
+            statusEl.className = 'status-message';
+
+            // Load and initialize WASM module
+            setTimeout(() => {
+                loadWasmAndCheck(input);
+            }, 1000);
+        }
+
+        async function loadWasmAndCheck(inputSecret) {
+            const statusEl = document.getElementById('statusMessage');
+
+            try {
+                statusEl.textContent = 'Loading security module...';
+
+                const wasmResponse = await fetch('module.wasm');
+                if (!wasmResponse.ok) {
+                    throw new Error('Failed to fetch WASM module');
+                }
+
+                const wasmBytes = await wasmResponse.arrayBuffer();
+                const wasmModule = await WebAssembly.instantiate(wasmBytes);
+
+                const { instance } = wasmModule;
+                const memory = instance.exports.memory;
+                const checkSecret = instance.exports.check_secret;
+
+                if (!checkSecret) {
+                    throw new Error('Security function not found');
+                }
+
+                statusEl.textContent = 'Verifying access credentials...';
+
+                // Write input to WASM memory
+                const encoder = new TextEncoder();
+                const inputBytes = encoder.encode(inputSecret);
+                const inputPtr = 1024; // Use a fixed offset in memory
+
+                const memoryView = new Uint8Array(memory.buffer);
+                memoryView.set(inputBytes, inputPtr);
+
+                // Call WASM check function
+                const result = checkSecret(inputPtr, inputBytes.length);
+
+                if (result === 1) {
+                    statusEl.textContent = 'ACCESS GRANTED - Redirecting...';
+                    statusEl.className = 'status-message success';
+
+                    // Set authentication flag
+                    localStorage.setItem('cd_auth', '1');
+                    localStorage.setItem('cd_timestamp', Date.now().toString());
+
+                    setTimeout(() => {
+                        window.location.href = 'flag.html';
+                    }, 2000);
+                } else {
+                    statusEl.textContent = 'ACCESS DENIED - Invalid credentials';
+                    statusEl.className = 'status-message';
+
+                    // Clear any existing auth
+                    localStorage.removeItem('cd_auth');
+                    localStorage.removeItem('cd_timestamp');
+                }
+
+            } catch (error) {
+                console.error('WASM Error:', error);
+                statusEl.textContent = 'SYSTEM ERROR - Security module failed to initialize';
+                statusEl.className = 'status-message';
+            }
+        }
+
+        // Handle Enter key in input
+        document.addEventListener('DOMContentLoaded', function() {
+            const secretInput = document.getElementById('secretInput');
+            secretInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAccess();
+                }
+            });
+
+            // Start matrix effect
+            createMatrixRain();
+        });
+
+        // Close challenge interface when clicking overlay
+        document.getElementById('overlay').addEventListener('click', closeChallenge);
+    </script>
+</body>
+</html>
