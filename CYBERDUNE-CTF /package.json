@@ -1,0 +1,24 @@
+{
+  "name": "cyberdune-ctf",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Very Hard WebAssembly reverse engineering challenge with client-side integrity bypass requirements.",
+  "main": "app.js",
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "build": "bash ./build.sh",
+    "start": "node app.js",
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2"
+  },
+  "keywords": [
+    "ctf",
+    "wasm",
+    "cyberdune"
+  ],
+  "license": "ISC"
+}

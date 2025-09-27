@@ -1,0 +1,4 @@
+1. Install Emscripten SDK
+2. Run `chmod +x build.sh && ./build.sh`
+3. Deploy all files to Vercel or static hosting
+4. Test the challenge
